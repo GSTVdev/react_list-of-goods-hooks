@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import 'bulma/css/bulma.css';
 import './App.scss';
-import { deflate } from 'zlib';
 
 export const goodsFromServer = [
   'Dumplings',
