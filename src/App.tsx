@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bulma/css/bulma.css';
 import './App.scss';
+import { deflate } from 'zlib';
 
 export const goodsFromServer = [
   'Dumplings',
@@ -14,36 +15,78 @@ export const goodsFromServer = [
   'Jam',
   'Garlic',
 ];
+enum SortType {
+  None = 'none',
+  Alphabetically = 'alphabetically',
+  ByLength = 'byLength',
+  Reverse = 'reverse',
+}
 
 export const App: React.FC = () => {
+  const [goods, setGoods] = useState([...goodsFromServer]);
+
+  function orderGoods(order: SortType) {
+    let orderedGoods = [];
+
+    switch (order) {
+      case 'alphabetically':
+        orderedGoods = [...goods.sort((a, b) => a.localeCompare(b))];
+        break;
+      case SortType.ByLength:
+        orderedGoods = [...goods.sort((a, b) => a.length - b.length)];
+        break;
+      case 'reverse':
+        orderedGoods = [...goods.reverse()];
+        break;
+      case 'none':
+        orderedGoods = [...goodsFromServer];
+        break;
+    }
+
+    return setGoods(orderedGoods);
+  }
+
   return (
     <div className="section content">
       <div className="buttons">
-        <button type="button" className="button is-info is-light">
+        <button
+          onClick={() => orderGoods(SortType.Alphabetically)}
+          type="button"
+          className="button is-info is-light"
+        >
           Sort alphabetically
         </button>
 
-        <button type="button" className="button is-success is-light">
+        <button
+          onClick={() => orderGoods(SortType.ByLength)}
+          type="button"
+          className="button is-success is-light"
+        >
           Sort by length
         </button>
 
-        <button type="button" className="button is-warning is-light">
+        <button
+          onClick={() => orderGoods(SortType.Reverse)}
+          type="button"
+          className="button is-warning is-light"
+        >
           Reverse
         </button>
 
-        <button type="button" className="button is-danger is-light">
+        <button
+          onClick={() => orderGoods(SortType.None)}
+          type="button"
+          className="button is-danger is-light"
+        >
           Reset
         </button>
       </div>
 
       <ul>
         <ul>
-          <li data-cy="Good">Dumplings</li>
-          <li data-cy="Good">Carrot</li>
-          <li data-cy="Good">Eggs</li>
-          <li data-cy="Good">Ice cream</li>
-          <li data-cy="Good">Apple</li>
-          <li data-cy="Good">...</li>
+          {goods.map(good => (
+            <li key={good}>{good}</li>
+          ))}
         </ul>
       </ul>
     </div>
